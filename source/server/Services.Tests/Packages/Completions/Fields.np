@@ -1,0 +1,4 @@
+P1(Field1, Field2) = /*@extractionField*/Field1: Word + /*@fieldReference*/Field1 +
+    Field2: /*@extractionAfterColon*/  Num + /*@afterOperator*/ ;
+P2(FieldX, FieldY) = P1(/*@field*/FieldX: /*@fromField*/Field1) + 
+    P1(/*@afterOpenBrace*/) + P1(FieldX: /*@referenceAfterColon*/ );

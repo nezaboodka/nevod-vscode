@@ -1,0 +1,3 @@
+﻿Pattern(/*@afterOpenBrace*/ F, /*@afterComma*/) = Word @where {
+/*@afterOpenCurlyBrace*/
+};

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Nevod",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#variables"
+    },
+    {
+      "include": "#punctuations"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.nevod",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.nevod",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.nevod",
+          "match": "(Word|Punct|Symbol|Space|LineBreak|Start|End|Alpha|Num|AlphaNum|NumAlpha|Blank|WordBreak|Any)\\b"
+        },
+        {
+          "name": "constant.numeric.nevod",
+          "match": "\\d+\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.nevod",
+          "match": "@(require|namespace|pattern|search|inside|outside|having|where)\\b"
+        },
+        {
+          "name": "keyword.operator.nevod",
+          "match": "(\\+|=|~|\\[|\\]|\\{|\\}|\\.{3}|&|\\?|_|\\-)"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.nevod",
+          "begin": "'",
+          "end": "'((!\\*)|!|\\*)?"
+        },
+        {
+          "name": "string.quoted.double.nevod",
+          "begin": "\"",
+          "end": "\"((!\\*)|!|\\*)?"
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.other.nevod",
+          "match": "\\.?[a-zA-Z][a-zA-Z0-9]*(\\-[a-zA-Z0-9]+)*(\\.[a-zA-Z0-9]+(\\-[a-zA-Z0-9]+)*)*"
+        }
+      ]
+    },
+    "punctuations": {
+      "patterns": [
+        {
+          "name": "punctuation.terminator.statement.nevod",
+          "match": ";"
+        },
+        {
+          "name": "punctuation.separator.comma.nevod",
+          "match": ","
+        },
+        {
+          "name": "punctuation.separator.colon.nevod",
+          "match": ":"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.np"
+}

@@ -1,0 +1,7 @@
+P1 = P2 @where {
+    P2 = Num;
+    P3 = P2;
+    P4 = P2 + {P2, P2};
+};
+
+@search P1.P2;

@@ -1,0 +1,80 @@
+{
+  "name": "nevod-vscode-extension",
+  "version": "0.0.1",
+  "displayName": "Nevod",
+  "description": "Nevod language support",
+  "publisher": "nezaboodka",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/nezaboodka/nevod-vscode-extension.git"
+  },
+  "keywords": [
+    "nevod"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "author": "Nezaboodka Team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/nezaboodka/nevod-vscode-extension/issues"
+  },
+  "homepage": "https://gitlab.com/nezaboodka/nevod-vscode-extension#readme",
+  "main": "./out/client/extension.js",
+  "engines": {
+    "vscode": "^1.61.0"
+  },
+  "activationEvents": [
+    "onLanguage:nevod"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "nevod",
+        "aliases": [
+          "Nevod",
+          "nevod"
+        ],
+        "extensions": [
+          ".np"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "nevod",
+        "scopeName": "source.np",
+        "path": "./syntaxes/nevod.tmLanguage.json"
+      }
+    ],
+    "configurationDefaults": {
+      "[nevod]": {
+        "editor.quickSuggestions": {
+          "comments": false,
+          "strings": true
+        },
+        "editor.suggest.insertMode": "replace"
+      }
+    }
+  },
+  "scripts": {
+    "build-debug": "dotnet build source/server/Nezaboodka.Nevod.LanguageServer.sln -c Debug -o out/server && tsc -p ./",
+    "build-release": "dotnet build source/server/Nezaboodka.Nevod.LanguageServer.sln -c Release -o out/server && tsc -p ./",
+    "test": "dotnet test source/server/Nezaboodka.Nevod.LanguageServer.sln",
+    "package-win-x64": "node delete-out-directory.js && dotnet publish source/server/LanguageServer/Nezaboodka.Nevod.LanguageServer.csproj -c Release -o out/server -r win-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true && npm run esbuild && vsce package --target win32-x64 -o nevod-vscode-extension-win-x64.vsix",
+    "package-linux-x64": "node delete-out-directory.js && dotnet publish source/server/LanguageServer/Nezaboodka.Nevod.LanguageServer.csproj -c Release -o out/server -r linux-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true && npm run esbuild && vsce package --target linux-x64 -o nevod-vscode-extension-linux-x64.vsix",
+    "package-darwin-x64": "node delete-out-directory.js && dotnet publish source/server/LanguageServer/Nezaboodka.Nevod.LanguageServer.csproj -c Release -o out/server -r osx-x64 /p:PublishSingleFile=true /p:PublishTrimmed=true && npm run esbuild && vsce package --target darwin-x64 -o nevod-vscode-extension-darwin-x64.vsix",
+    "esbuild": "esbuild source/client/extension.ts --bundle --outfile=out/client/extension.js --external:vscode --format=cjs --platform=node --sourcemap --minify"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.2",
+    "@types/vscode": "^1.57.0",
+    "esbuild": "^0.14.25",
+    "typescript": "^4.3.3",
+    "vsce": "^2.1.0"
+  }
+}

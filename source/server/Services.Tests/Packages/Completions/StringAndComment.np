@@ -1,0 +1,5 @@
+﻿Pattern = /*@string*/'text';
+/*@multilineComment*//*  Multiline
+    comment
+*/
+/*@singleLineComment*/// Single line comment

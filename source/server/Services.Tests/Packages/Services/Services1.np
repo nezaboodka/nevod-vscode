@@ -1,0 +1,3 @@
+P1(F1) = F1: Word;
+@search P1;
+P2(F2) = P1(F2: F1);

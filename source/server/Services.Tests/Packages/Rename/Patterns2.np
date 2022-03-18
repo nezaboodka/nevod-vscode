@@ -1,0 +1,4 @@
+@require "./Patterns1.np";
+
+Ref6 = /*@ref6*/Namespace.Pattern.ToRename;
+RefToNested4 = /*@refToNested4*/Namespace.Pattern.ToRename.Nested;

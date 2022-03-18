@@ -1,0 +1,11 @@
+@namespace N1 {
+   @namespace N2 {
+      P1 = Word;
+   }
+   P2 = Num;
+   @search /*@insideNamespace*/
+}
+P3 = AlphaNum;
+@search /*@global*/
+@search /*@patternSearch*/N1.
+@search /*@namespaceSearch*/N1.*;

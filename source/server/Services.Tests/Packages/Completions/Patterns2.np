@@ -1,0 +1,9 @@
+@namespace N1 {
+   PackagePattern3 = NumAlpha;
+}
+
+@namespace N3 {
+   PackagePattern4 = WordBreak;
+}
+
+PackagePattern5 = End;

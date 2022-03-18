@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "extension-build-debug",
+      "type": "npm",
+      "script": "build-debug"
+    },
+    {
+      "label": "extension-build-release",
+      "type": "npm",
+      "script": "build-release"
+    }
+  ]
+}

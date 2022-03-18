@@ -1,0 +1,2 @@
+﻿Pattern(/*@field*/Field) = /*@fieldRef1*/Field: Word + /*@fieldRef2*/Field;
+Reference(/*@anotherField*/AnotherField) = Pattern(/*@anotherFieldRef1*/AnotherField: /*@fieldRef3*/Field);

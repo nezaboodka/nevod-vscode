@@ -1,0 +1,11 @@
+**/*
+!out/client/extension.js
+!out/server/Nezaboodka.Nevod.LanguageServer.exe
+!out/server/Nezaboodka.Nevod.LanguageServer
+!out/server/*.dll
+!out/server/*.so
+!out/server/*.dylib
+!package.json
+!LICENSE.md
+!syntaxes
+!language-configuration.json

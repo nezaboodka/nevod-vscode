@@ -1,0 +1,19 @@
+﻿@require "./Patterns2.np";
+
+@namespace N1 {
+   MasterPattern = Word @where {
+      Pattern(Field) = /*@afterIdentifier*/MasterPattern. + /*@insideIdentifier*/N1.N2.PackagePattern2 + /*@noInput*/  @where {
+         Nested = Alpha;
+         Field = Punct;
+      };
+      Neighbor = Word;
+      Nested = Word;
+      = NumAlpha @where {
+         InsideUnnamed = Symbol;
+      };
+   };
+   PackagePattern1 = Word;
+   @namespace N2 {
+      PackagePattern2 = Num;
+   }   
+}

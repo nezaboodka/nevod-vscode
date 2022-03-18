@@ -1,0 +1,2 @@
+﻿Pattern1 = /*@ref1*/UndeclaredField: Word;
+Pattern2 = Pattern1(/*@ref2*/Field: /*@ref3*/FromField);

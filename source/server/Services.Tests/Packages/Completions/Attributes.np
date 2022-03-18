@@ -1,0 +1,3 @@
+P1 = 'text'!*(/*@textAttributes*/);
+P2 = /*@token*/Word(/*@wordAttributes*/);
+P3 = Space(/*@nonWordAttributes*/);

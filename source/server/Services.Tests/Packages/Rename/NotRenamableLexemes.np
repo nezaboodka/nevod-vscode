@@ -1,0 +1,1 @@
+﻿Pattern1/*@afterIdentifier*/ /*@equal*/= /*@token*/Word + /*@text*/'text'*(/*@attribute*/Alpha);

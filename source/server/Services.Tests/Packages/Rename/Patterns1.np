@@ -1,0 +1,16 @@
+﻿@namespace Namespace {
+    Pattern = /*@ref1*/ToRename @where {
+        /*@toRename*/ToRename = Word + /*@refToNested1*/ToRename.Nested @where {
+           Nested = Num;
+           RefToNested2 = Nested;
+        };
+        Ref2 = /*@ref2*/ToRename;
+        Ref3 = /*@ref3*/Pattern.ToRename;
+        Ref4 = /*@ref4*/Namespace.Pattern.ToRename;
+        RefToNested3 = /*@refToNested3*/ToRename.Nested;
+    };
+    Ref5 = /*@ref5*/Pattern.ToRename;
+    @search /*@refFromSearchTarget*/Pattern.ToRename;
+    RefWithTrivia = /*@refWithTrivia*/Pattern /* Comment */  .
+        ToRename;
+}

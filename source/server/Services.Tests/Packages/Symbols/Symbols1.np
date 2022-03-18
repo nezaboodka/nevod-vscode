@@ -1,0 +1,4 @@
+P1 = Word;
+P2 = P3 @where {
+  P3 = Num;
+};

@@ -1,0 +1,10 @@
+﻿@require "./Services1.np";
+
+P3 = P1 + Space + P2;
+@namespace Namespace
+{
+    @search @pattern WithInner = Inner @where
+    {
+        Inner = Num;
+    };
+}

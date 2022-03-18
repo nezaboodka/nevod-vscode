@@ -1,0 +1,4 @@
+@require "./References1.np";
+
+P6 = P1.P2;
+P7 = P1.P2 + P1.P2 + P1.P2;

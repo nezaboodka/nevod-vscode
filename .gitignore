@@ -1,0 +1,9 @@
+node_modules
+out
+obj
+bin
+.DS_Store
+.idea
+*.sln.DotSettings.user
+TestResults
+*.vsix
