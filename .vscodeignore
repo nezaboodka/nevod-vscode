@@ -6,6 +6,6 @@
 !out/server/*.so
 !out/server/*.dylib
 !package.json
-!LICENSE.md
+!LICENSE
 !syntaxes
 !language-configuration.json

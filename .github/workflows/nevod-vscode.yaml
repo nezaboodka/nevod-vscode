@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -22,4 +19,38 @@ jobs:
       - run: npm install 
       - name: Run tests
         run: npm test
-  
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16'
+      - run: npm install
+      - name: Package Win-x64 extension
+        run: npm run package-win-x64
+      - name: Publish Win-x64 extension
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }} }} 
+          extensionFile: nevod-vscode-extension-win-x64.vsix
+      - name: Package Darwin-x64 extension
+        run: npm run package-darwin-x64
+      - name: Publish Darwin-x64 extension
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }} }} 
+          extensionFile: nevod-vscode-extension-darwin-x64.vsix
+      - name: Package Linux-x64 extension
+        run: npm run package-linux-x64
+      - name: Publish Linux-x64 extension
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }} }} 
+          extensionFile: nevod-vscode-extension-linux-x64.vsix
