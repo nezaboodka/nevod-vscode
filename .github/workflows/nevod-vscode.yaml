@@ -38,19 +38,19 @@ jobs:
       - name: Publish Win-x64 extension
         uses: HaaLeo/publish-vscode-extension@v1
         with:
-          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }} }} 
+          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }}
           extensionFile: nevod-vscode-extension-win-x64.vsix
       - name: Package Darwin-x64 extension
         run: npm run package-darwin-x64
       - name: Publish Darwin-x64 extension
         uses: HaaLeo/publish-vscode-extension@v1
         with:
-          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }} }} 
+          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }} 
           extensionFile: nevod-vscode-extension-darwin-x64.vsix
       - name: Package Linux-x64 extension
         run: npm run package-linux-x64
       - name: Publish Linux-x64 extension
         uses: HaaLeo/publish-vscode-extension@v1
         with:
-          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }} }} 
+          pat: ${{ secrets.NEVOD_OPEN_VSX_TOKEN }}
           extensionFile: nevod-vscode-extension-linux-x64.vsix
