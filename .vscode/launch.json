@@ -9,7 +9,7 @@
         "--extensionDevelopmentPath=${workspaceFolder}"
       ],
       "outFiles": [
-        "${workspaceFolder}/client/out//*.js"
+        "${workspaceFolder}/client/build//*.js"
       ],
       "preLaunchTask": "Build extension (Debug)"
     },
@@ -21,7 +21,7 @@
         "--extensionDevelopmentPath=${workspaceFolder}"
       ],
       "outFiles": [
-        "${workspaceFolder}/client/out//*.js"
+        "${workspaceFolder}/client/build//*.js"
       ],
       "preLaunchTask": "Build extension (Release)"
     },

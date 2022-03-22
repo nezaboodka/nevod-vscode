@@ -1,13 +1,19 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "module": "CommonJS",
-    "outDir": "out/client",
+    "outDir": "build/client",
     "rootDir": "source/client",
     "sourceMap": true,
     "strict": true
   },
-  "include": ["source/client"],
-  "exclude": ["node_modules"]
+  "include": [
+    "source/client"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
