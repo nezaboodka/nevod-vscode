@@ -5,17 +5,25 @@
       "name": "Run Extension (Debug)",
       "type": "extensionHost",
       "request": "launch",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "outFiles": ["${workspaceFolder}/client/out//*.js"],
-      "preLaunchTask": "extension-build-debug"
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/client/out//*.js"
+      ],
+      "preLaunchTask": "Build extension (Debug)"
     },
     {
       "name": "Run Extension (Release)",
       "type": "extensionHost",
       "request": "launch",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "outFiles": ["${workspaceFolder}/client/out//*.js"],
-      "preLaunchTask": "extension-build-release"
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/client/out//*.js"
+      ],
+      "preLaunchTask": "Build extension (Release)"
     },
     {
       "name": ".NET Core Attach",

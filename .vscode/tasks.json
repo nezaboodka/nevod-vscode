@@ -2,14 +2,112 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "extension-build-debug",
+      "label": "Build extension (Debug)",
       "type": "npm",
-      "script": "build-debug"
+      "script": "build-debug",
+      "problemMatcher": [
+        "$msCompile",
+        "$tsc"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      }
     },
     {
-      "label": "extension-build-release",
+      "label": "Build extension (Release)",
       "type": "npm",
-      "script": "build-release"
-    }
+      "script": "build-release",
+      "problemMatcher": [
+        "$msCompile",
+        "$tsc"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Run tests",
+      "type": "npm",
+      "script": "test",
+      "problemMatcher": "$msCompile",
+      "group": {
+        "isDefault": true,
+        "kind": "test"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Package Windows x64 extension",
+      "type": "npm",
+      "script": "package-win-x64",
+      "problemMatcher": [
+        "$msCompile",
+        "$tsc"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Package Darwin x64 extension",
+      "type": "npm",
+      "script": "package-darwin-x64",
+      "problemMatcher": [
+        "$msCompile",
+        "$tsc"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Package Linux x64 extension",
+      "type": "npm",
+      "script": "package-linux-x64",
+      "problemMatcher": [
+        "$msCompile",
+        "$tsc"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Install dependencies",
+      "type": "npm",
+      "script": "install",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      }
+    },
   ]
 }
