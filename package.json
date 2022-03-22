@@ -1,6 +1,6 @@
 {
   "name": "nevod-vscode-extension",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "displayName": "Nevod",
   "description": "Nevod language support",
   "publisher": "nezaboodka",
