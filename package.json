@@ -69,13 +69,13 @@
     "esbuild": "esbuild source/client/extension.ts --bundle --outfile=build/client/extension.js --external:vscode --format=cjs --platform=node --sourcemap --minify"
   },
   "dependencies": {
-    "vscode-languageclient": "^7.0.0"
+    "vscode-languageclient": "7.0.0"
   },
   "devDependencies": {
-    "@types/node": "^15.12.2",
-    "@types/vscode": "^1.57.0",
-    "esbuild": "^0.14.25",
-    "typescript": "^4.3.3",
-    "vsce": "^2.1.0"
+    "@types/node": "15.12.2",
+    "@types/vscode": "1.57.0",
+    "esbuild": "0.14.25",
+    "typescript": "4.3.3",
+    "vsce": "2.1.0"
   }
 }
