@@ -4,6 +4,7 @@
   "displayName": "Nevod",
   "description": "Nevod language support",
   "publisher": "nezaboodka",
+  "icon": "icon.png",
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.com/nezaboodka/nevod-vscode-extension.git"
