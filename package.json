@@ -16,7 +16,7 @@
     "Programming Languages"
   ],
   "author": "Nezaboodka Team",
-  "license": "ISC",
+  "license": "Apache 2.0",
   "bugs": {
     "url": "https://gitlab.com/nezaboodka/nevod-vscode-extension/issues"
   },
