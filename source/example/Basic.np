@@ -1,0 +1,7 @@
+@require "Basic.HashTag.np";
+@require "Basic.GUID.np";
+
+@namespace Basic {
+  @search @pattern GUID = Basic.GUID.Target;
+  @search @pattern HashTag = Basic.HashTag.Target;
+}

@@ -1,0 +1,14 @@
+@namespace Basic.GUID {
+    @search @pattern Target = {
+        GUID,
+        '{' + GUID + '}',
+        'urn:uuid:' + GUID,
+        ?'x' + "'" + GUID + "'"
+    }
+    @where {
+        GUID = {
+            Word(8) + [3 '-' + Word(4)] + '-' + Word(12),
+            Word(32)
+        };
+    };
+}
