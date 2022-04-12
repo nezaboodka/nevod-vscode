@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -39,6 +40,22 @@ namespace Nezaboodka.Nevod.Services
 
     internal class SyntaxInfoCollector : PatternLinker
     {
+        private static readonly bool? IsFileSystemCaseSensitive;
+
+        static SyntaxInfoCollector()
+        {
+            string? mainModulePath = Process.GetCurrentProcess().MainModule?.FileName;
+            if (mainModulePath is null)
+                IsFileSystemCaseSensitive = null;
+            else
+            {
+                if (File.Exists(mainModulePath.ToLower()) && File.Exists(mainModulePath.ToUpper()))
+                    IsFileSystemCaseSensitive = false;
+                else
+                    IsFileSystemCaseSensitive = true;
+            }
+        }
+
         private readonly Dictionary<Uri, LinkedPackageSyntax> _packageByFileUri;
         private Dictionary<Syntax, ISyntaxInfo<Syntax>> _syntaxInfoTableItems = null!; // Initialized in Link
         private Document _document = null!; // Initialized in Link
@@ -49,6 +66,7 @@ namespace Nezaboodka.Nevod.Services
 
         public SyntaxInfoCollector(Dictionary<Uri, LinkedPackageSyntax> packageByFileUri, 
             IReadOnlyDictionary<Uri, Document> documents)
+            : base(fileContentProvider: null, packageCache: null, IsFileSystemCaseSensitive)
         {
             _packageByFileUri = packageByFileUri;
             Documents = new Dictionary<Uri, Document>(documents); 
