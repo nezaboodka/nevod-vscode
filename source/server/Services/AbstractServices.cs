@@ -18,6 +18,7 @@ namespace Nezaboodka.Nevod.Services
         private readonly SyntaxInfoTableBuilder _syntaxInfoTableBuilder = new();
         private readonly RenameProvider _renameProvider = new();
         private readonly CompletionsProvider _completionsProvider = new();
+        private readonly FormattingVisitor _formattingVisitor = new();
 
         private protected Dictionary<Uri, Document> Documents { get; private set; } = new();
 
@@ -65,6 +66,11 @@ namespace Nezaboodka.Nevod.Services
                 Documents.Remove(uri);
                 RebuildSyntaxInfo();
             }
+        }
+
+        public void UpdateConfiguration(Configuration configuration)
+        {
+            _formattingVisitor.UpdateConfiguration(configuration.Formatting);
         }
 
         public Location? GetDefinition(PointerLocation location)
@@ -213,6 +219,23 @@ namespace Nezaboodka.Nevod.Services
 
         public IEnumerable<Completion>? GetCompletions(PointerLocation location) =>
             _completionsProvider.GetCompletions(location, _syntaxInfoTable, Documents);
+
+        public IEnumerable<TextEdit> FormatDocument(Uri uri, FormattingOptions options)
+        {
+            LinkedPackageSyntax package = _syntaxInfoTable.GetLinkedPackageSyntaxInfo(uri).Syntax;
+            Document document = Documents[uri];
+            return _formattingVisitor.CreateFormattingEdits(package, document, options);
+        }
+
+        public IEnumerable<TextEdit> FormatDocumentRange(Uri uri, Range range, FormattingOptions options)
+        {
+            LinkedPackageSyntax package = _syntaxInfoTable.GetLinkedPackageSyntaxInfo(uri).Syntax;
+            Document document = Documents[uri];
+            int rangeStart = document.OffsetAt(range.Start);
+            int rangeEnd = document.OffsetAt(range.End);
+            TextRange textRange = new(rangeStart, rangeEnd);
+            return _formattingVisitor.CreateFormattingEdits(package, document, textRange, options);
+        }
 
         private protected void RebuildSyntaxInfo()
         {

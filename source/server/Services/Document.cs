@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Nezaboodka.Nevod.Services
 {
@@ -31,7 +32,7 @@ namespace Nezaboodka.Nevod.Services
         internal string Text { get; private set; }
         internal bool IsTrackedByServer { get; set; }
 
-        internal Document(Uri uri, string text, bool isTrackedByServer)
+        internal Document(Uri uri, string text, bool isTrackedByServer = false)
         {
             Uri = uri;
             Text = text;
@@ -45,8 +46,23 @@ namespace Nezaboodka.Nevod.Services
             _package = null;
         }
 
+        internal void Update(IList<TextEdit> textEdits)
+        {
+            for (int i = textEdits.Count - 1; i >= 0; i--)
+            {
+                TextEdit textEdit = textEdits[i];
+                int start = OffsetAt(textEdit.Location.Range.Start);
+                int end = OffsetAt(textEdit.Location.Range.End);
+                Text = $"{Text[..start]}{textEdit.NewText}{Text[end..]}";
+            }
+            _lineMap = null;
+            _package = null;
+        }
+
         internal Position PositionAt(int offset) => LineMap.PositionAt(offset);
 
         internal int OffsetAt(Position position) => LineMap.OffsetAt(position);
+
+        internal int LineStartOffset(int line) => LineMap.LineStartOffset(line);
     }
 }

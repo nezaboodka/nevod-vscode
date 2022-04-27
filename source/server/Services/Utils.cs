@@ -12,12 +12,10 @@ namespace Nezaboodka.Nevod.Services
             ReadOnlySpan<char> span = text.AsSpan(range.Start, range.Length);
             while (span.StartsWith("//"))
             {
-                int lastCommentIndex = span.IndexOfAny('\r', '\n');
-                if (lastCommentIndex == -1)
-                    lastCommentIndex = span.Length - 1;
-                if (lastCommentIndex + 1 < span.Length && span[lastCommentIndex] == '\r' && span[lastCommentIndex + 1] == '\n')
-                    lastCommentIndex++;
-                range = new TextRange(range.Start + lastCommentIndex + 1, range.End);
+                int newLineIndex = span.IndexOfAny('\r', '\n');
+                if (newLineIndex == -1)
+                    newLineIndex = span.Length;
+                range = new TextRange(range.Start + newLineIndex, range.End);
                 span = text.AsSpan(range.Start, range.Length);
             }
             return range;
@@ -117,6 +115,88 @@ namespace Nezaboodka.Nevod.Services
             return range;
         }
 
+        internal static TextRange TrimStartNonWhitespaceCharacters(string text, TextRange range)
+        {
+            ValidateTextRange(text, range);
+            int currentIndex = range.Start;
+            while (currentIndex < range.End && !char.IsWhiteSpace(text[currentIndex]))
+            {
+                currentIndex++;
+            }
+            return new TextRange(currentIndex, range.End);
+        }
+
+        internal static TextRange TrimStartWhitespaceNonNewLineCharacters(string text, TextRange range)
+        {
+            ValidateTextRange(text, range);
+            int currentIndex = range.Start;
+            while (currentIndex < range.End && char.IsWhiteSpace(text[currentIndex]) && text[currentIndex] is not '\r' or '\n')
+            {
+                currentIndex++;
+            }
+            return new TextRange(currentIndex, range.End);
+        }
+
+        internal static LexemeTriviaInfo GetLexemeTriviaInfo(string text, TextRange range)
+        {
+            ValidateTextRange(text, range);
+            int lexemeRangeStart = range.Start;
+            if (text[range.Start] is '\'' or '"')
+                range = TrimStartString(text, range);
+            else
+            {
+                ReadOnlySpan<char> span = text.AsSpan(range.Start, range.Length);
+                // If span is not trivia only
+                if (!(span.StartsWith("\r") || span.StartsWith("\n") || 
+                      span.StartsWith("//") || span.StartsWith("/*")))
+                    range = TrimStartNonWhitespaceCharacters(text, range);
+            }
+            TextRange lexemeRange = new(lexemeRangeStart, range.Start);
+            List<Trivia> triviaList = new();
+            while (!range.IsEmpty)
+            {
+                Trivia trivia;
+                ReadOnlySpan<char> span = text.AsSpan(range.Start, range.Length);
+                if (span.StartsWith("\r\n"))
+                {
+                    TextRange triviaRange = new(range.Start, range.Start + 2);
+                    trivia = new Trivia(TriviaKind.NewLine, triviaRange);
+                    range = new TextRange(triviaRange.End, range.End);
+                }
+                else if (span.StartsWith("\r") || span.StartsWith("\n"))
+                {
+                    TextRange triviaRange = new(range.Start, range.Start + 1);
+                    trivia = new Trivia(TriviaKind.NewLine, triviaRange);
+                    range = new TextRange(triviaRange.End, range.End);
+                }
+                else if (char.IsWhiteSpace(span[0]))
+                {
+                    int rangeStart = range.Start;
+                    range = TrimStartWhitespaceNonNewLineCharacters(text, range);
+                    TextRange triviaRange = new(rangeStart, range.Start);
+                    trivia = new Trivia(TriviaKind.Whitespaces, triviaRange);
+                }
+                else if (span.StartsWith("//"))
+                {
+                    int rangeStart = range.Start;
+                    range = TrimStartSingleLineComment(text, range);
+                    TextRange triviaRange = new(rangeStart, range.Start);
+                    trivia = new Trivia(TriviaKind.SingleLineComment, triviaRange);
+                }
+                else if (span.StartsWith("/*"))
+                {
+                    int rangeStart = range.Start;
+                    range = TrimStartMultilineComment(text, range);
+                    TextRange triviaRange = new(rangeStart, range.Start);
+                    trivia = new Trivia(TriviaKind.MultiLineComment, triviaRange);
+                }
+                else
+                    break;
+                triviaList.Add(trivia);
+            }
+            return new LexemeTriviaInfo(lexemeRange, triviaList);
+        }
+
         internal static TextRange GetMultipartIdentifierRange(string text, TextRange range)
         {
             ValidateTextRange(text, range);
@@ -159,13 +239,17 @@ namespace Nezaboodka.Nevod.Services
                 if (span.StartsWith("//"))
                 {
                     range = TrimStartSingleLineComment(text, range);
-                    if (range.Start > offset)
+                    if (range.Start > offset ||
+                        // If both offset and single line comment are in the end of file
+                        range.Start == offset && offset == text.Length)
                         isInComment = true;
                 }
                 else if (span.StartsWith("/*"))
                 {
                     range = TrimStartMultilineComment(text, range);
-                    if (range.Start > offset)
+                    if (range.Start > offset ||
+                        // If both offset and multiline comment are in the end of file and multiline comment is not terminated
+                        range.Start == offset && offset == text.Length && !text.EndsWith("*/"))
                         isInComment = true;
                 }
                 else if (span.StartsWith("\'") || span.StartsWith("'"))

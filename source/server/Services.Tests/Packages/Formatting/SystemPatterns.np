@@ -1,0 +1,4 @@
+
+Pattern1 =Any;
+Pattern2= Blank;
+    Pattern3 =WordBreak;

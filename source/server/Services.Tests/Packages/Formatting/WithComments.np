@@ -1,0 +1,7 @@
+﻿
+P1 = Word
+// Comment
++ Num;
+P2 = Word
+/* Multiline */ // Another
++ Num;

@@ -1,0 +1,5 @@
+﻿
+P = Word @where { Inner1 = Word
++ Num;
+Inner2 = Alpha;
+};

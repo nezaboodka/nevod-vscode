@@ -22,11 +22,10 @@ namespace Nezaboodka.Nevod.LanguageServer.Tests
             (Stream outputWrite, Stream outputRead) = FullDuplexStream.CreatePair();
 
             // Act
-            Task<int> serverProcessTask = new Server().ProcessAsync(outputWrite, inputRead);
+            ThreadPool.QueueUserWorkItem(_ => new Server().Process(outputWrite, inputRead));
             await SendRequestAsync(inputWrite, method, @params, requestId);
             string response = await ReceiveResponseAsync(outputRead) ?? throw new Exception("No response has been sent");
             await StopServerAsync(inputWrite);
-            await serverProcessTask;
             inputWrite.Close(); // inputRead closed automatically
             outputWrite.Close(); // outputRead closed automatically
 

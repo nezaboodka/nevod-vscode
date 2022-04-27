@@ -1,0 +1,4 @@
+
+Pattern = Word @where {
+    Inner = Num;
+};

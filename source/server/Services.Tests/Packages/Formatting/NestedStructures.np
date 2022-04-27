@@ -1,0 +1,12 @@
+﻿
+Pattern = {
+Word,
+Num +
+Alpha,
+[
+2+ 'string',
+3-6 AlphaNum,
+5 'A' _
+'B'
+]
+};

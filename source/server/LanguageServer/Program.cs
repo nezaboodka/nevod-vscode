@@ -12,4 +12,4 @@ while (!Debugger.IsAttached)
 Server server = new();
 using Stream input = Console.OpenStandardInput();
 using Stream output = Console.OpenStandardOutput();
-return await server.ProcessAsync(output, input);
+return server.Process(output, input);

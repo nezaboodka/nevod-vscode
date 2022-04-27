@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Nezaboodka.Nevod.Services
 {
-    public delegate Task DiagnosticsPublisher(Uri uri, Diagnostic[] diagnostics);
+    public delegate void DiagnosticsPublisher(Uri uri, Diagnostic[] diagnostics);
 
     public interface IServices
     {
@@ -17,6 +16,8 @@ namespace Nezaboodka.Nevod.Services
         void CloseDocument(Uri uri);
 
         void DeleteDocument(Uri uri);
+
+        void UpdateConfiguration(Configuration configuration);
 
         Location? GetDefinition(PointerLocation location);
 
@@ -33,5 +34,9 @@ namespace Nezaboodka.Nevod.Services
         IEnumerable<TextEdit>? RenameSymbol(PointerLocation location, string newName);
 
         IEnumerable<Completion>? GetCompletions(PointerLocation location);
+
+        IEnumerable<TextEdit>? FormatDocument(Uri uri, FormattingOptions options);
+
+        IEnumerable<TextEdit>? FormatDocumentRange(Uri uri, Range range, FormattingOptions options);
     }
 }

@@ -13,6 +13,7 @@ namespace Nezaboodka.Nevod.Services.Tests
         private const string ServicesDirectoryName = "Services";
         private const string RenameDirectoryName = "Rename";
         private const string CompletionsDirectoryName = "Completions";
+        private const string FormattingDirectoryName = "Formatting";
 
         [TestMethod]
         public void GetDefinition()
@@ -883,6 +884,220 @@ Pattern =";
             CollectionAssert.AreEquivalent(keywordOnlyCompletions, foundAfterOpenBraceCompletions?.ToArray());
             CollectionAssert.AreEquivalent(keywordOnlyCompletions, foundAfterCommaCompletions?.ToArray());
             CollectionAssert.AreEquivalent(keywordOnlyCompletions, foundAfterOpenCurlyBraceCompletions?.ToArray());
+        }
+
+        [TestMethod]
+        public void GeneralFormatting()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "General.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            string expectedText = @"
+@require 'Basic.Url.np';
+@require 'Basic.Email.np';
+
+@search Basic.Email.Target;
+@search Basic.Url
+    .Target;
+
+P1 = Word
+@where {
+    P2 = Num + Alpha + 'String';
+    P3 = {~Word, Num} + ?Space + [1+ Num, 3-4 Alpha] + AlphaNum(3-6, Lowercase) + 'text'!*(Num, 2);
+    P4 = Num @where {
+        P5 = Word;
+    };
+};
+HtmlTitle(Title) = '<title>' .. Title: [1-20] ~ 'Exclusion' .. '</title>';
+WithField(F) = F: Word;
+WithExtraction(X, ~Y) = WithField(X: F);
+Multi.Part.
+    Identifier = Word;
+".NormalizeLineFeeds();
+
+            // Act
+            TextEdit[] formattingEdits = services.FormatDocument(fileUri, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
+        }
+
+        [TestMethod]
+        public void FormattingWithOpenBraceOnNewLine()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "WithInner.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            Configuration configuration = new Configuration(new FormattingConfiguration
+            {
+                PlaceOpenBraceOnNewLine = true
+            });
+            string expectedText = @"
+Pattern = Word @where
+{
+    Inner = Num;
+};
+".NormalizeLineFeeds();
+
+            // Act
+            services.UpdateConfiguration(configuration);
+            TextEdit[] formattingEdits = services.FormatDocument(fileUri, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
+        }
+
+        [TestMethod]
+        public void FormattingWithTabs()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "WithInner.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: false, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            string expectedText =
+                "\nPattern = Word @where {\n" +
+                "\tInner = Num;\n" +
+                "};\n";
+
+            // Act
+            TextEdit[] formattingEdits = services.FormatDocument(fileUri, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
+        }
+
+        [TestMethod]
+        public void RangeFormatting()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "Range.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            // Range of nested patterns
+            Range range = new Range(new Position(2, 0), new Position(4, 1));
+            string expectedText = @"
+Pattern1=Word @where{
+    Pattern2 = Num;
+    Pattern3 = {Alpha, Num};
+};
+".NormalizeLineFeeds();
+
+            // Act
+            TextEdit[] formattingEdits = services.FormatDocumentRange(fileUri, range, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
+        }
+
+        [TestMethod]
+        public void FormattingWithComments()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "WithComments.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            string expectedText = @"
+P1 = Word
+    // Comment
+    + Num;
+P2 = Word
+/* Multiline */ // Another
+    + Num;
+".NormalizeLineFeeds();
+
+            // Act
+            TextEdit[] formattingEdits = services.FormatDocument(fileUri, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
+        }
+
+        [TestMethod]
+        public void FormattingWithIndentationRecalculation()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "RecalculateIndentation.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            string expectedText = @"
+P = Word @where {
+    Inner1 = Word
+        + Num;
+    Inner2 = Alpha;
+};
+".NormalizeLineFeeds();
+
+            // Act
+            TextEdit[] formattingEdits = services.FormatDocument(fileUri, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
+        }
+
+        [TestMethod]
+        public void FormattingWithNestedStructures()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "NestedStructures.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            string expectedText = @"
+Pattern = {
+    Word,
+    Num +
+        Alpha,
+    [
+        2+ 'string',
+        3-6 AlphaNum,
+        5 'A' _
+            'B'
+    ]
+};
+".NormalizeLineFeeds();
+
+            // Act
+            TextEdit[] formattingEdits = services.FormatDocument(fileUri, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
+        }
+
+        [TestMethod]
+        public void FormattingWithSystemPatterns()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "SystemPatterns.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            string expectedText = @"
+Pattern1 = Any;
+Pattern2 = Blank;
+Pattern3 = WordBreak;
+".NormalizeLineFeeds();
+
+            // Act
+            TextEdit[] formattingEdits = services.FormatDocument(fileUri, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
         }
     }
 }

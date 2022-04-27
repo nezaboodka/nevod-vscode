@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Nezaboodka.Nevod.Services
 {
@@ -35,6 +36,15 @@ namespace Nezaboodka.Nevod.Services
             if (position.Line <= _lineStartIndices.Count)
                 return _lineStartIndices[position.Line - 1] + position.Character;
             return _lineStartIndices[^1] + position.Character;
+        }
+
+        internal int LineStartOffset(int line)
+        {
+            if (line < 0 || line > _lineStartIndices.Count)
+                throw new ArgumentOutOfRangeException(nameof(line), line, "Line number is out of range");
+            if (line == 0)
+                return 0;
+            return _lineStartIndices[line - 1];
         }
     }
 }

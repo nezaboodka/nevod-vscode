@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -31,16 +31,22 @@ namespace Nezaboodka.Nevod.LanguageServer
             s_jsonMessageFormatter.JsonSerializer.Converters.Add(new UriConverter());
         }
 
-        // ProcessAsync needs to remain internal to avoid being called by rpc
-        internal async Task<int> ProcessAsync(Stream sendingStream, Stream receivingStream)
+        // Process needs to remain internal to avoid being called by rpc
+        internal int Process(Stream sendingStream, Stream receivingStream)
         {
             EnsureNotStarted();
             _isInitialized = false;
             _isShutDown = false;
             HeaderDelimitedMessageHandler messageHandler = new(sendingStream, receivingStream, s_jsonMessageFormatter);
             _jsonRpc = new JsonRpc(messageHandler, this);
+            // Set up a synchronization context that will execute code only on one thread
+            var singleThreadedSyncContext = new SingleThreadedSynchronizationContext();
+            _jsonRpc.SynchronizationContext = singleThreadedSyncContext;
+            var frame = new SingleThreadedSynchronizationContext.Frame();
+            _jsonRpc.Disconnected += (s, e) => frame.Continue = false;
             _jsonRpc.StartListening();
-            await _jsonRpc.Completion;
+            // Blocking call until connection is dropped
+            singleThreadedSyncContext.PushFrame(frame);
             return ExitCode;
         }
 
@@ -74,6 +80,8 @@ namespace Nezaboodka.Nevod.LanguageServer
                 {
                     PrepareProvider = true
                 },
+                // DocumentFormattingProvider = true,
+                // DocumentRangeFormattingProvider = true,
                 // CompletionProvider = new CompletionOptions()
                 // {
                 //     TriggerCharacters = new [] { "\\", "/", "." }
@@ -82,18 +90,17 @@ namespace Nezaboodka.Nevod.LanguageServer
         }
 
         [JsonRpcMethod("initialized")]
-        public async Task InitializedAsync()
+        public void Initialized()
         {
-            _services.PublishDiagnostics += PublishDiagnosticsAsync;
+            _services.PublishDiagnostics += PublishDiagnostics;
             RegistrationParams registrationParams = new(new[]
             {
-                new Registration("1", "workspace/didChangeWatchedFiles")
-                {
-                    // Watcher is created on client.
-                    RegisterOptions = new DidChangeWatchedFilesRegistrationOptions(Array.Empty<FileSystemWatcher>())
-                }
+                new Registration("1", "workspace/didChangeConfiguration")
             });
-            await _jsonRpc.NotifyWithParameterObjectAsync("client/registerCapability", registrationParams);
+// Use GetResult because single thread synchronization context is used
+#pragma warning disable VSTHRD002
+            _jsonRpc.InvokeWithParameterObjectAsync("client/registerCapability", registrationParams).GetAwaiter().GetResult();
+            UpdateConfiguration();
         }
 
         [JsonRpcMethod("shutdown")]
@@ -270,6 +277,47 @@ namespace Nezaboodka.Nevod.LanguageServer
                 };
         }
 
+        [JsonRpcMethod("textDocument/formatting")]
+        public IEnumerable<TextEdit>? Formatting(JToken jsonParams)
+        {
+            var @params = Deserialize<DocumentFormattingParams>(jsonParams);
+            IEnumerable<Services.TextEdit>? edits = _services.FormatDocument(@params.TextDocument.Uri, @params.Options);
+            return edits?.Select(e => (TextEdit)e);
+        }
+
+        [JsonRpcMethod("textDocument/rangeFormatting")]
+        public IEnumerable<TextEdit>? RangeFormatting(JToken jsonParams)
+        {
+            var @params = Deserialize<DocumentRangeFormattingParams>(jsonParams);
+            IEnumerable<Services.TextEdit>? edits = _services.FormatDocumentRange(@params.TextDocument.Uri, @params.Range, @params.Options);
+            return edits?.Select(e => (TextEdit)e);
+        }
+
+        [JsonRpcMethod("workspace/didChangeConfiguration")]
+        public void DidChangeConfiguration(JToken jsonParams)
+        {
+            UpdateConfiguration();
+        }
+
+        private void UpdateConfiguration()
+        {
+            Configuration configuration = GetConfiguration();
+            _services.UpdateConfiguration(configuration);
+        }
+
+        private Configuration GetConfiguration()
+        {
+            ConfigurationParams configuration = new ConfigurationParams(new ConfigurationItem[]
+            {
+                new()
+                {
+                    Section = "nevod",
+                }
+            });
+            var configurations = _jsonRpc.InvokeWithParameterObjectAsync<JArray>("workspace/configuration", configuration).GetAwaiter().GetResult();
+            return Deserialize<Configuration>(configurations[0]);
+        }
+
         private static string Serialize<T>(T @object)
         {
             StringWriter stringWriter = new();
@@ -325,7 +373,7 @@ namespace Nezaboodka.Nevod.LanguageServer
                 Children = children
             };
 
-        private async Task PublishDiagnosticsAsync(Uri uri, Services.Diagnostic[] diagnostics)
+        private void PublishDiagnostics(Uri uri, Services.Diagnostic[] diagnostics)
         {
             Diagnostic[] localDiagnostics = (from d in diagnostics
                 select new Diagnostic(d.Range, d.Message)
@@ -334,7 +382,7 @@ namespace Nezaboodka.Nevod.LanguageServer
                     Severity = DiagnosticSeverity.Error
                 }).ToArray();
             PublishDiagnosticsParams publishDiagnosticsParams = new(uri, localDiagnostics);
-            await _jsonRpc.NotifyWithParameterObjectAsync("textDocument/publishDiagnostics", publishDiagnosticsParams);
+            _jsonRpc.NotifyWithParameterObjectAsync("textDocument/publishDiagnostics", publishDiagnosticsParams).GetAwaiter().GetResult();
         }
     }
 

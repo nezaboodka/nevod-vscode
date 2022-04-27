@@ -49,6 +49,27 @@
         "path": "./syntaxes/nevod.tmLanguage.json"
       }
     ],
+    "configuration": {
+      "title": "Nevod",
+      "properties": {
+        "nevod.formatting.placeOpenBraceOnNewLine": {
+          "type": "boolean",
+          "description": "Place open brace for nested patterns on a new line.",
+          "default": true
+        },
+        "nevod.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the Nevod language server."
+        }
+      }
+    },
     "configurationDefaults": {
       "[nevod]": {
         "editor.quickSuggestions": {

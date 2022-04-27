@@ -1,0 +1,22 @@
+
+@require'Basic.Url.np' ;
+@require 'Basic.Email.np';
+
+@search Basic.Email.Target;
+@search Basic.Url
+.Target;
+
+P1 = Word
+    @where
+{
+ P2=Num+Alpha+      'String';
+    P3 = { ~Word,Num }+?Space + [1 +Num, 3 - 4 Alpha ] + AlphaNum ( 3 - 6, Lowercase ) + 'text'!*( Num,2 ) ;
+P4 = Num@where{
+    P5 = Word;};
+   }
+;
+HtmlTitle(Title)='<title>'..Title :[ 1 - 20 ]~ 'Exclusion'..'</title>';
+WithField(F )=F :Word;
+WithExtraction ( X,~ Y ) = WithField ( X :F);
+Multi .   Part .
+Identifier = Word;

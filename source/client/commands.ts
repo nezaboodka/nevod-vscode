@@ -1,8 +1,12 @@
 import {
   CancellationToken, commands, CompletionContext, CompletionItem, CompletionItemLabel, CompletionItemProvider,
-  languages, Location, Position as VSCodePosition, TextDocument, Uri
+  languages, Location, Position as VSCodePosition, TextDocument, Uri, DocumentFormattingEditProvider, 
+  DocumentRangeFormattingEditProvider, FormattingOptions, TextEdit, Range, EndOfLine, DocumentSelector
 } from "vscode"
-import { LanguageClient, Position as LspPosition } from "vscode-languageclient/node"
+import {
+  LanguageClient, Position as LspPosition, Range as LspRange,
+  DocumentFormattingParams, DocumentRangeFormattingParams
+} from "vscode-languageclient/node"
 
 async function peekReferences(path: string, { line, character }: LspPosition): Promise<void> {
   const uri = Uri.parse(path)
@@ -16,7 +20,11 @@ export function registerCommands(): void {
 }
 
 export function registerProviders(client: LanguageClient): void {
-  languages.registerCompletionItemProvider({ scheme: "file", language: "nevod" }, new NevodCompletionItemProvider(client), ...NevodCompletionItemProvider.triggerCharacters)
+  const selector: DocumentSelector = { scheme: "file", language: "nevod" }
+  languages.registerCompletionItemProvider(selector, new NevodCompletionItemProvider(client), ...NevodCompletionItemProvider.triggerCharacters)
+  const formattingProvider = new NevodFormattingProvider(client);
+  languages.registerDocumentFormattingEditProvider(selector, formattingProvider)
+  languages.registerDocumentRangeFormattingEditProvider(selector, formattingProvider)
 }
 
 class NevodCompletionItemProvider implements CompletionItemProvider {
@@ -25,8 +33,8 @@ class NevodCompletionItemProvider implements CompletionItemProvider {
   public constructor(private client: LanguageClient) {
   }
 
-  async provideCompletionItems(document: TextDocument, position: VSCodePosition, token: CancellationToken, context: CompletionContext): Promise<CompletionItem[] | undefined> {
-    let args = {
+  public async provideCompletionItems(document: TextDocument, position: VSCodePosition, token: CancellationToken, context: CompletionContext): Promise<CompletionItem[] | undefined> {
+    const args = {
       context: context,
       textDocument: {
         uri: document.uri.toString()
@@ -64,4 +72,46 @@ class CompletionItemLabelEx {
     public detail?: string,
     public description?: string) {
   }
+}
+
+class NevodFormattingProvider implements DocumentFormattingEditProvider, DocumentRangeFormattingEditProvider {
+  public constructor(private client: LanguageClient) {
+  }
+
+  public async provideDocumentFormattingEdits(document: TextDocument, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
+    const nevodFormattingOptions = this.createNevodFormattingOptions(document, options)
+    const args: DocumentFormattingParams = {
+      textDocument: {
+        uri: document.uri.toString()
+      },
+      options: nevodFormattingOptions,
+    }
+    const response = await this.client.sendRequest<TextEdit[]>("textDocument/formatting", args, token)
+    return response
+  }
+
+  public async provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
+    const nevodFormattingOptions = this.createNevodFormattingOptions(document, options)
+    const args: DocumentRangeFormattingParams = {
+      textDocument: {
+        uri: document.uri.toString()
+      },
+      range: this.rangeToLspRange(range),
+      options: nevodFormattingOptions,
+    }
+    const response = await this.client.sendRequest<TextEdit[]>("textDocument/rangeFormatting", args, token)
+    return response
+  }
+
+  private createNevodFormattingOptions(document: TextDocument, options: FormattingOptions): NevodFormattingOptions {
+    return { newLine: document.eol == EndOfLine.LF ? "\n" : "\r\n", ...options }
+  }
+
+  private rangeToLspRange(range: Range): LspRange {
+    return LspRange.create(range.start.line, range.start.character, range.end.line, range.end.character)
+  }
+}
+
+interface NevodFormattingOptions extends FormattingOptions {
+  newLine: string  
 }

@@ -1,0 +1,6 @@
+
+Pattern1=Word @where{
+Pattern2=Num;
+Pattern3= {Alpha ,Num}
+;
+};

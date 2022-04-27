@@ -38,7 +38,8 @@ namespace Nezaboodka.Nevod.LanguageServer
             End = end;
         }
 
-        public static implicit operator Range(Services.Range range) => new Range(range.Start, range.End);
+        public static implicit operator Range(Services.Range range) => new(range.Start, range.End);
+        public static implicit operator Services.Range(Range range) => new(range.Start, range.End);
     }
 
     public readonly struct Location
@@ -275,9 +276,9 @@ namespace Nezaboodka.Nevod.LanguageServer
         Verbose
     }
 
-    class RegistrationParams 
+    public class RegistrationParams
     {
-        public Registration[] Registrations { get; set; } 
+        public Registration[] Registrations { get; set; }
 
         public RegistrationParams(Registration[] registrations)
         {

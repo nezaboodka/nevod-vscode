@@ -178,4 +178,20 @@ namespace Nezaboodka.Nevod.LanguageServer
         Changed,
         Deleted
     }
+
+    class ConfigurationParams
+    {
+        public ConfigurationItem[] Items { get; set; }
+
+        public ConfigurationParams(ConfigurationItem[] items)
+        {
+            Items = items;
+        }
+    }
+
+    class ConfigurationItem
+    {
+        public Uri? ScopeUri { get; set; }
+        public string? Section { get; set; }
+    }
 }

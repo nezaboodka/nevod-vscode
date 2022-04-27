@@ -11,7 +11,7 @@ namespace Nezaboodka.Nevod.Services.Tests
         {
             // Arrange
             string textEmpty = string.Empty;
-            const string textWithComment = "// Some comment\n// Some comment\nNezaboodka";
+            const string textWithComment = "// Some comment\nNezaboodka";
             const string textWithCommentOnly = "// Some comment";
             const string textWithoutComment = "Nezaboodka";
             const string textWithWindowsLineFeed = "// Some comment\r\nNezaboodka";
@@ -31,10 +31,10 @@ namespace Nezaboodka.Nevod.Services.Tests
 
             // Assert
             Assert.AreEqual(string.Empty, GetTextFromRange(textEmpty, trimmedTextEmpty));
-            Assert.AreEqual("Nezaboodka", GetTextFromRange(textWithComment, trimmedTextWithComment));
+            Assert.AreEqual("\nNezaboodka", GetTextFromRange(textWithComment, trimmedTextWithComment));
             Assert.AreEqual(string.Empty, GetTextFromRange(textWithCommentOnly, trimmedTextWithCommentOnly));
             Assert.AreEqual("Nezaboodka", GetTextFromRange(textWithoutComment, trimmedTextWithoutComment));
-            Assert.AreEqual("Nezaboodka", GetTextFromRange(textWithWindowsLineFeed, trimmedTextWithWindowsLineFeed));
+            Assert.AreEqual("\r\nNezaboodka", GetTextFromRange(textWithWindowsLineFeed, trimmedTextWithWindowsLineFeed));
             Assert.ThrowsException<ArgumentException>(PassOutOfLeftBoundTextRange);
             Assert.ThrowsException<ArgumentException>(PassOutOfRightBoundTextRange);
         }

@@ -9,7 +9,7 @@ export function startLanguageClient(context: ExtensionContext): LanguageClient {
     documentSelector: [{ scheme: "file", language: "nevod" }],
     synchronize: { fileEvents: workspace.createFileSystemWatcher("**/*.np", true, true, false) }
   }
-  const client = new LanguageClient("nevodLanguageServer", "Nevod Language Server", serverOptions, clientOptions)
+  const client = new LanguageClient("nevod", "Nevod Language Server", serverOptions, clientOptions)
   client.start()
   return client;
 }
