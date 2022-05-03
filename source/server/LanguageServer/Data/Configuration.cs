@@ -16,11 +16,17 @@
     public class FormattingConfiguration
     {
         public bool PlaceOpenBraceOnNewLine { get; set; }
+        public bool InsertSpaceAfterOpeningAndBeforeClosingVariationBraces { get; set; }
+        public bool InsertSpaceAfterOpeningAndBeforeClosingSpanBraces { get; set; }
 
         public static implicit operator Services.FormattingConfiguration(FormattingConfiguration configuration) =>
             new()
             {
-                PlaceOpenBraceOnNewLine = configuration.PlaceOpenBraceOnNewLine
+                PlaceOpenBraceOnNewLine = configuration.PlaceOpenBraceOnNewLine,
+                InsertSpaceAfterOpeningAndBeforeClosingVariationBraces = 
+                    configuration.InsertSpaceAfterOpeningAndBeforeClosingVariationBraces,
+                InsertSpaceAfterOpeningAndBeforeClosingSpanBraces = 
+                    configuration.InsertSpaceAfterOpeningAndBeforeClosingSpanBraces,
             };
     }
 }

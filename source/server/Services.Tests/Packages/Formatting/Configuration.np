@@ -1,0 +1,6 @@
+
+Pattern = Word @where {
+    Inner = Num;
+    Variation = {Word, Alpha};
+    Span = [0+ 'Hello'];
+};

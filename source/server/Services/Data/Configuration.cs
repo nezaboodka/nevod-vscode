@@ -13,5 +13,7 @@
     public class FormattingConfiguration
     {
         public bool PlaceOpenBraceOnNewLine { get; set; }
+        public bool InsertSpaceAfterOpeningAndBeforeClosingVariationBraces { get; set; }
+        public bool InsertSpaceAfterOpeningAndBeforeClosingSpanBraces { get; set; }
     }
 }

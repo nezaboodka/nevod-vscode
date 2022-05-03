@@ -57,6 +57,16 @@
           "description": "Place open brace for nested patterns on a new line.",
           "default": true
         },
+        "nevod.formatting.insertSpaceAfterOpeningAndBeforeClosingVariationBraces": {
+          "type": "boolean",
+          "description": "Insert space after opening and before closing variation braces.",
+          "default": false
+        },
+        "nevod.formatting.insertSpaceAfterOpeningAndBeforeClosingSpanBraces": {
+          "type": "boolean",
+          "description": "Insert space after opening and before closing span braces.",
+          "default": false
+        },
         "nevod.trace.server": {
           "scope": "window",
           "type": "string",

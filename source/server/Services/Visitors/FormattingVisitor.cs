@@ -42,7 +42,9 @@ namespace Nezaboodka.Nevod.Services
 
         private static readonly FormattingConfiguration s_defaultConfiguration = new()
         {
-            PlaceOpenBraceOnNewLine = false
+            PlaceOpenBraceOnNewLine = false,
+            InsertSpaceAfterOpeningAndBeforeClosingVariationBraces = false,
+            InsertSpaceAfterOpeningAndBeforeClosingSpanBraces = false
         };
 
         private Document _document = null!; // Initialized in CreateFormattingEdits
@@ -498,6 +500,23 @@ namespace Nezaboodka.Nevod.Services
                     s_nonOperatorKeywordTokens, FormattingRule.AnyTokenIds),
                 new("NoWhitespaceAfterUnaryOperator", FormattingAction.DeleteWhitespace, false,
                     s_unaryOperators, FormattingRule.AnyTokenIds, IsUnaryOperatorContext),
+                // Configuration-dependent rules should have higher priority than configuration-independent.
+                new("WhitespaceAfterOpenVariationBrace", FormattingAction.AddWhitespace, false,
+                    TokenId.OpenCurlyBrace, typeof(VariationSyntax),
+                    FormattingRule.AnyTokenId, FormattingRule.AnyParentType,
+                    _ => configuration.InsertSpaceAfterOpeningAndBeforeClosingVariationBraces),
+                new("WhitespaceBeforeCloseVariationBrace", FormattingAction.AddWhitespace, false,
+                    FormattingRule.AnyTokenId, FormattingRule.AnyParentType,
+                    TokenId.CloseCurlyBrace, typeof(VariationSyntax),
+                    _ => configuration.InsertSpaceAfterOpeningAndBeforeClosingVariationBraces),
+                new("WhitespaceAfterOpenSpanBrace", FormattingAction.AddWhitespace, false,
+                    TokenId.OpenSquareBracket, typeof(SpanSyntax),
+                    FormattingRule.AnyTokenId, FormattingRule.AnyParentType,
+                    _ => configuration.InsertSpaceAfterOpeningAndBeforeClosingSpanBraces),
+                new("WhitespaceBeforeCloseSpanBrace", FormattingAction.AddWhitespace, false,
+                    FormattingRule.AnyTokenId, FormattingRule.AnyParentType,
+                    TokenId.CloseSquareBracket, typeof(SpanSyntax),
+                    _ => configuration.InsertSpaceAfterOpeningAndBeforeClosingSpanBraces),
                 new("NoWhitespaceAfterOpenBrace", FormattingAction.DeleteWhitespace, false,
                     s_openBraces, FormattingRule.AnyTokenIds, IsBraceContext),
                 new("NoWhitespaceBeforeCloseBrace", FormattingAction.DeleteWhitespace, false,

@@ -926,21 +926,25 @@ Multi.Part.
         }
 
         [TestMethod]
-        public void FormattingWithOpenBraceOnNewLine()
+        public void FormattingConfiguration()
         {
             // Arrange
-            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "WithInner.np");
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "Configuration.np");
             TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
             FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
             Document document = services.GetDocument(fileUri);
             Configuration configuration = new Configuration(new FormattingConfiguration
             {
-                PlaceOpenBraceOnNewLine = true
+                PlaceOpenBraceOnNewLine = true,
+                InsertSpaceAfterOpeningAndBeforeClosingVariationBraces = true,
+                InsertSpaceAfterOpeningAndBeforeClosingSpanBraces = true
             });
             string expectedText = @"
 Pattern = Word @where
 {
     Inner = Num;
+    Variation = { Word, Alpha };
+    Span = [ 0+ 'Hello' ];
 };
 ".NormalizeLineFeeds();
 
