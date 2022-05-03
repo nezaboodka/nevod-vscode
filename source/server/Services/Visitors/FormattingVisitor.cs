@@ -166,6 +166,7 @@ namespace Nezaboodka.Nevod.Services
         private void VisitLexeme(Lexeme lexeme, Syntax parent, Syntax? grandparent, uint grandparentIndentation)
         {
             LexemeTriviaInfo triviaInfo = Utils.GetLexemeTriviaInfo(_document.Text, lexeme.TextRange);
+            RecalculateIndentationForNamespace(parent, lexeme);
             if (FormattingRangeOverlapsWith(triviaInfo.TrimmedRange))
             {
                 NewLineAction newLineAction = ApplySuitableRule(lexeme, parent);
@@ -367,6 +368,18 @@ namespace Nezaboodka.Nevod.Services
                 return syntax;
             }
             return node;
+        }
+
+        private void RecalculateIndentationForNamespace(Syntax parent, Lexeme lexeme)
+        {
+            // Namespace does not have it's own node, indentation is calculated separately.
+            // Namespace cannot be nested in pattern, so its parent should be PackageSyntax.
+            if (parent is not PackageSyntax)
+                return;
+            if (_previousLexeme?.TokenId is TokenId.NamespaceKeyword)
+                _currentIndentation += _formattingOptions.TabSize;
+            else if (lexeme.TokenId == TokenId.CloseCurlyBrace)
+                _currentIndentation = Math.Max(_currentIndentation - _formattingOptions.TabSize, 0);
         }
 
         private List<FormattingRule> CreateFormattingRules(FormattingConfiguration configuration)

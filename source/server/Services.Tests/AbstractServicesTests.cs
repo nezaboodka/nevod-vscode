@@ -1099,5 +1099,33 @@ Pattern3 = WordBreak;
             // Assert
             Assert.AreEqual(expectedText, document.Text);
         }
+
+        [TestMethod]
+        public void FormattingWithNamespace()
+        {
+            // Arrange
+            Uri fileUri = TestHelper.PackageUri(FormattingDirectoryName, "Namespace.np");
+            TestServices services = TestHelper.CreateTestServices(FormattingDirectoryName);
+            FormattingOptions options = new FormattingOptions(tabSize: 4, insertSpaces: true, newLine: "\n");
+            Document document = services.GetDocument(fileUri);
+            string expectedText = @"
+@namespace N1 {
+    P = Word;
+    @namespace N2 {
+        P = Word @where {
+            Nested = Word;
+        };
+    }
+    P2 = Word;
+}
+".NormalizeLineFeeds();
+
+            // Act
+            TextEdit[] formattingEdits = services.FormatDocument(fileUri, options).ToArray();
+            document.Update(formattingEdits);
+
+            // Assert
+            Assert.AreEqual(expectedText, document.Text);
+        }
     }
 }

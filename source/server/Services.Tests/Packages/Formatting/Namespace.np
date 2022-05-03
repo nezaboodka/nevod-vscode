@@ -1,0 +1,10 @@
+
+@namespace N1 {
+P = Word;
+@namespace N2 {
+P = Word @where {
+Nested = Word;
+};
+}
+P2 = Word;
+}
