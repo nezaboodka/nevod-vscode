@@ -29,6 +29,9 @@ This is an [open-source](https://github.com/nezaboodka/nevod-vscode) Visual Stud
 **Diagnostics**. Two types of errors are displayed: syntax errors (operator expected, pattern should end with semicolon, etc.) and linking errors (reference to undefined pattern, undeclared field, etc.). Hover over an underlined text to see error message. Use `Ctrl+Shift+M` to open Problems panel and see error summary. Use `F8` or `Shift+F8` keys to loop through errors in the current file.
 ![screencast](images/errors.gif)
 
+**Formatting**. Use `Shift+Alt+F` to format the entire active file or `Ctrl+K Ctrl+F` to format selected text. Configure formatting style (open curly brace position, space after opening and before closing braces) in extension settings.
+![screencast](images/formatting.gif)
+
 ## Installation
 
 Nevod VS Code extension is available at [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=nezaboodka.nevod-vscode-extension).
