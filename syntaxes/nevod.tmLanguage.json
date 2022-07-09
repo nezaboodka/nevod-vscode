@@ -42,6 +42,10 @@
           "match": "(Word|Punct|Symbol|Space|LineBreak|Start|End|Alpha|Num|AlphaNum|NumAlpha|Blank|WordBreak|Any|Lowercase|Uppercase|TitleCase)\\b"
         },
         {
+          "name": "constant.language.nevod.ru",
+          "match": "(Слово|Пунктуация|Символ|Пробел|РазделительСтрок|Начало|Конец|Буквы|Цифры|БуквыЦифры|ЦифрыБуквы|Пропуск|РазделительСтрок|Любое|Строчные|Прописные|ПерваяПрописная)\\b"
+        },
+        {
           "name": "constant.numeric.nevod",
           "match": "\\d+\\b"
         }
@@ -52,6 +56,10 @@
         {
           "name": "keyword.control.nevod",
           "match": "@(require|namespace|pattern|search|inside|outside|having|where)\\b"
+        },
+        {
+          "name": "keyword.control.nevod.ru",
+          "match": "@(требуется|пространство|шаблон|искать|внутри|вне|имеющий|где)\\b"
         },
         {
           "name": "keyword.operator.nevod",

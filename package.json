@@ -34,10 +34,14 @@
         "id": "nevod",
         "aliases": [
           "Nevod",
-          "nevod"
+          "nevod",
+          "Невод",
+          "невод"
         ],
         "extensions": [
-          ".np"
+          ".np",
+          ".nevod",
+          ".невод"
         ],
         "configuration": "./language-configuration.json"
       }
