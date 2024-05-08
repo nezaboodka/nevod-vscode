@@ -1,6 +1,6 @@
 import {
   CancellationToken, commands, CompletionContext, CompletionItem, CompletionItemLabel, CompletionItemProvider,
-  languages, Location, Position as VSCodePosition, TextDocument, Uri, DocumentFormattingEditProvider, 
+  languages, Location, Position as VSCodePosition, TextDocument, Uri, DocumentFormattingEditProvider,
   DocumentRangeFormattingEditProvider, FormattingOptions, TextEdit, Range, EndOfLine, DocumentSelector
 } from "vscode"
 import {
@@ -22,13 +22,13 @@ export function registerCommands(): void {
 export function registerProviders(client: LanguageClient): void {
   const selector: DocumentSelector = { scheme: "file", language: "nevod" }
   languages.registerCompletionItemProvider(selector, new NevodCompletionItemProvider(client), ...NevodCompletionItemProvider.triggerCharacters)
-  const formattingProvider = new NevodFormattingProvider(client);
+  const formattingProvider = new NevodFormattingProvider(client)
   languages.registerDocumentFormattingEditProvider(selector, formattingProvider)
   languages.registerDocumentRangeFormattingEditProvider(selector, formattingProvider)
 }
 
 class NevodCompletionItemProvider implements CompletionItemProvider {
-  public static readonly triggerCharacters = ['.', '"', '\'', '/', ' '];
+  public static readonly triggerCharacters = ['.', '"', '\'', '/'];
 
   public constructor(private client: LanguageClient) {
   }
@@ -43,7 +43,7 @@ class NevodCompletionItemProvider implements CompletionItemProvider {
     }
     let response = await this.client.sendRequest<NevodCompletionItem[] | undefined>("textDocument/completion", args, token)
     return response?.map<CompletionItem>(nevodCompletionItem => {
-      let label: string | CompletionItemLabel;
+      let label: string | CompletionItemLabel
       if (nevodCompletionItem.labelEx)
         label = {
           label: nevodCompletionItem.labelEx.label,
@@ -51,19 +51,19 @@ class NevodCompletionItemProvider implements CompletionItemProvider {
           detail: nevodCompletionItem.labelEx.detail
         }
       else
-        label = nevodCompletionItem.label;
+        label = nevodCompletionItem.label
       return {
         ...nevodCompletionItem,
         // Subtract 1 because in language server protocol CompletionKind kinds start from 1, in VSCode - from 0.
         kind: nevodCompletionItem.kind ? nevodCompletionItem.kind - 1 : undefined,
         label: label
       }
-    });
+    })
   }
 }
 
 class NevodCompletionItem extends CompletionItem {
-  public labelEx?: CompletionItemLabelEx;
+  public labelEx?: CompletionItemLabelEx
 }
 
 class CompletionItemLabelEx {
@@ -113,5 +113,5 @@ class NevodFormattingProvider implements DocumentFormattingEditProvider, Documen
 }
 
 interface NevodFormattingOptions extends FormattingOptions {
-  newLine: string  
+  newLine: string
 }
