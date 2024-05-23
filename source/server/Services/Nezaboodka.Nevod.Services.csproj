@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nezaboodka.Nevod" Version="1.4.2" />
+    <PackageReference Include="Nezaboodka.Nevod" Version="1.5.4" />
   </ItemGroup>
 </Project>
