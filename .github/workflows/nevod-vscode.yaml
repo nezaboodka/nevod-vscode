@@ -16,12 +16,12 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.0.x'
-      - name: Setup Node.js 
+          dotnet-version: '8.0.x'
+      - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
           node-version: '16'
-      - run: npm install 
+      - run: npm install
       - name: Run tests
         run: npm test
   publish:
@@ -33,7 +33,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.0.x'
+          dotnet-version: '8.0.x'
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
@@ -53,7 +53,7 @@ jobs:
         uses: HaaLeo/publish-vscode-extension@v1
         with:
           registryUrl: https://marketplace.visualstudio.com
-          pat: ${{ secrets.NEVOD_VS_MARKETPLACE_TOKEN }} 
+          pat: ${{ secrets.NEVOD_VS_MARKETPLACE_TOKEN }}
           extensionFile: build/nevod-vscode-extension-darwin-x64.vsix
       - name: Package Linux-x64 extension
         run: npm run package-linux-x64
